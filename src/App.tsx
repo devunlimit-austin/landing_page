@@ -3,13 +3,15 @@ import styled from 'styled-components';
 
 function App() {
   const [isScrolling, setScrolling] = useState(false);
-  // useEffect(() => {
-  //   window.addEventListener('scroll', onScrollHandler);
-  //   return () => window && window.removeEventListener('scroll', onScrollHandler);
-  // }, []);
+  useEffect(() => {
+    const win: Window = window;
+    win.addEventListener('scroll', onScrollHandler);
 
-  const onScrollHandler = (event: React.UIEvent<HTMLDivElement>) => {
-    const scrollTop: number = event.currentTarget.scrollTop;
+    return () => window.removeEventListener('scroll', onScrollHandler);
+  }, []);
+
+  const onScrollHandler = (event: Event) => {
+    const scrollTop: number = document.documentElement.scrollTop;
     console.log('!!!', scrollTop);
 
     if (scrollTop > 860) {
@@ -17,7 +19,7 @@ function App() {
     } else setScrolling(false);
   };
   return (
-    <div onScroll={onScrollHandler}>
+    <div>
       <Fixed isScrolling={isScrolling}>
         <div className="bg transition"></div>
         <ul>
