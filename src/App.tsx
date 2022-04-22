@@ -1,13 +1,34 @@
 import { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 
+
+interface sample {
+  desc : string,
+  like : number,
+  emoji : string,
+}
+
+const SampleData : sample[] =  [
+  {
+    desc : "하하하",
+    like : 123,
+    emoji : "a"
+  },{
+    desc : "호호호",
+    like : 123,
+    emoji : "b"
+  }
+]
 function App() {
   const [isScrolling, setScrolling] = useState(false);
   useEffect(() => {
     const win: Window = window;
     win.addEventListener('scroll', onScrollHandler);
+    
+    console.log('SampleData',SampleData)
 
     return () => window.removeEventListener('scroll', onScrollHandler);
+    
   }, []);
 
   const onScrollHandler = (event: Event) => {
@@ -40,14 +61,19 @@ function App() {
                 </h2>
         </div>
         <div className="bg1">
-        <video className="video" controls muted autoPlay loop>
+        <video className="video" playsInline muted autoPlay loop>
           <source src="/thumb.webm" type="video/webm"/>
-          <source src="/thumb.mp4" type="video/mp4" />
+          <source src="/thumb.mp4" type="video/mp4"  />
         </video>
         </div>
         <div className="gradient"></div>
       </div>
-      <div style={{ width:"100%", height: '600px',backgroundColor:"blue" }}> </div>
+      <div className="content2">
+        <ul> 
+         {SampleData.map((_, idx) =>  
+         <li> <div className="desc" key={idx}><div> <p>{_.desc}</p></div><div><span>{_.emoji}</span><span>{_.like}</span></div></div></li>)}
+        </ul>
+      </div>
       <div className='buttonWrapper'> 
         <div className="button">
           <span> 버튼 </span>
@@ -79,6 +105,41 @@ const Container = styled.div<StyledContainerProps>`
     margin: -70px auto 0 auto;
     width: 500px;
   }
+
+  .section2 {
+  
+  }
+
+  .desc {
+    background: #FFFFFF;
+    width: 222.33px;
+    height: 72px;
+    border: 0.56003px solid #E4E4E4;
+    box-sizing: border-box;
+    border-radius: 58.8031px;
+  }
+
+  .content2 {
+    
+  }
+
+  .content2 div:nth-of-type(1){
+      width:100px;
+  }
+  .content2 div:nth-of-type(4n+1){
+      width:100px;
+  }
+  .content2 div:nth-of-type(4n+2){
+      width:150px;
+  }
+
+  .content2 div:nth-of-type(4n+3){
+      width:200px;
+  }
+  .content2 div:nth-of-type(4n+4){
+      width:250px;
+  }
+
 
   li {
     width: 100wh;
@@ -153,9 +214,6 @@ const Container = styled.div<StyledContainerProps>`
   }
 
   .content1{
-    position: relative;
-    overflow:auto; 
-    height:600px;
 
 
   }
@@ -164,22 +222,19 @@ const Container = styled.div<StyledContainerProps>`
     width: 100%;
     height: 100%;
     color: transparent;
-    /* background: url('https://www.devunlimit.com/assets/images/main-1.jpg');
-
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover; */
+    position: relative;
 
   }
   .video {
-    width: 150%;
-    height: auto;
+    height: 100%;
+    width: auto;
+    object-fit: cover;
   }
   .gradient {
     position: absolute;
     z-index: 5;
-    left: 0;
-    bottom: 0;
+    left: 0%;
+    bottom: 0%;
     width: 100%;
     height: 121.51px;
     background: linear-gradient(180deg, rgba(255, 254, 254, 0) 30%, rgba(255, 254, 254, 0.6) 85%  ,#FFFFFF 100%);
