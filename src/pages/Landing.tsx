@@ -1,5 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef, UIEvent } from 'react';
+import TextareaAutosize from 'react-textarea-autosize';
 import styled from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useIntl } from 'react-intl';
+
+import { Header, Footer } from '../components';
 
 interface sample {
   desc: string;
@@ -76,25 +81,30 @@ const SampleData: sample[] = [
 ];
 
 const Landing: React.FC = () => {
-  const [isScrolling, setScrolling] = useState(false);
-  useEffect(() => {
-    const win: Window = window;
-    win.addEventListener('scroll', onScrollHandler);
+  const { formatMessage: f, locale } = useIntl();
+  const [isScrolling, setScrolling] = useState<boolean>(false);
 
-    console.log('SampleData', SampleData);
+  // useEffect(() => {
+  //   const win: Window = window;
+  //   win.addEventListener('scroll', onScrollHandler);
+  //   return () => window.removeEventListener('scroll', onScrollHandler);
+  // }, []);
 
-    return () => window.removeEventListener('scroll', onScrollHandler);
-  }, []);
-
-  const onScrollHandler = (event: Event) => {
-    const scrollTop: number = document.documentElement.scrollTop;
+  const handleUIEvent = (e: UIEvent<HTMLDivElement>) => {
+    const scrollTop: number = e.currentTarget.scrollTop;
 
     if (scrollTop > 860) {
       setScrolling(true);
     } else setScrolling(false);
   };
+
+  // const onScrollHandler = (event: Event) => {
+
+  // };
+
   return (
-    <Container isScrolling={isScrolling}>
+    <Container onScroll={handleUIEvent}>
+      <Header isScrolling={isScrolling} />
       <div className="content1">
         <div className="text1">
           <h2 className="heading">하이</h2>
@@ -108,11 +118,11 @@ const Landing: React.FC = () => {
         </div>
       </div>
       <div className="content2">
-        <div></div>
+        <div className="blur"></div>
         <ul>
           {SampleData.map((_, idx) => (
-            <li>
-              <div className="desc" key={idx}>
+            <li key={idx}>
+              <div className="desc">
                 <div>
                   <p>{_.desc}</p>
                 </div>
@@ -125,29 +135,38 @@ const Landing: React.FC = () => {
           ))}
         </ul>
         <div>
-          <div>
-            <textarea></textarea>
+          <div className={'TextAreaWrap'}>
+            <TextareaAutosize
+              minRows={1}
+              maxRows={1}
+              className="TextArea"
+              placeholder={'해당되는 항목이 없다면 여기에 직접 입력해서 고민을 나눠보세요!'}
+              maxLength={50}
+              onKeyPress={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                if (e.key === 'Enter') e.preventDefault();
+              }}
+            />
+            <FontAwesomeIcon className="arrow-up" icon={['fas', 'arrow-up']} />
           </div>
-          <div></div>
         </div>
       </div>
+      <div className="content1"></div>
       <div className="buttonWrapper">
         <div className="button">
           <span> 버튼 </span>
         </div>
       </div>
+      <Footer />
     </Container>
   );
 };
 
-interface StyledContainerProps {
-  isScrolling: boolean;
-}
-
-const Container = styled.div<StyledContainerProps>`
+const Container = styled.div`
   display: block;
   overflow: auto;
   height: 100vh;
+  background: #f5f6f8;
+  font-family: 'Poppins', 'Noto Sans CJK KR', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 
   .fixed {
     position: fixed;
@@ -175,8 +194,10 @@ const Container = styled.div<StyledContainerProps>`
     box-sizing: border-box;
     border-radius: 58.8031px;
     padding: 13px 35px 13px;
-    text-align: center;
-    margin-bottom: 21px;
+    text-align: left;
+    margin-right: 5px;
+    margin-right: 25px;
+    margin-bottom: 25px;
   }
   .desc:hover:after {
     background: rgba(129, 0, 255, 0.8);
@@ -188,26 +209,76 @@ const Container = styled.div<StyledContainerProps>`
     bottom: 0;
     color: #fff;
     padding-top: 30px;
+    text-align: center;
     content: '공감하기';
   }
 
-  //   .content2 ul li:nth-of-type(1) {
-  //   paddingLeft 1
-  // }
-  // .content2 div:nth-of-type(4n + 1) {
-  //   width: 100px;
-  // }
-  // .content2 div:nth-of-type(4n + 2) {
-  //   width: 150px;
-  // }
+  .TextAreaWrap {
+    display: flex;
+    position: relative;
+    margin: 0px 17px 0px;
+  }
 
-  // .content2 div:nth-of-type(4n + 3) {
-  //   width: 200px;
-  // }
-  // .content2 div:nth-of-type(4n + 4) {
-  //   width: 250px;
-  // }
-  .content2 ul li:nth-of-type(4n + 1) {
+  .TextArea {
+    flex: 8;
+    border-radius: 78.6629px;
+    padding: 15px 50px 15px 30px;
+    width: 100%;
+    height: 63px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border: none;
+    resize: none;
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 130%;
+    letter-spacing: 0.01em;
+    border: 0.75px solid #565656;
+    outline: 0.75px solid #565656;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    &:focus + .arrow-up {
+      color: #6b1ce4;
+    }
+    &:placeholder {
+      color: #b6b7b8;
+    }
+  }
+
+  .content2 {
+    position: relative;
+  }
+
+  .content2 .blur {
+    z-index: 0;
+    position: absolute;
+    width: 633px;
+    height: 633px;
+    left: 0;
+    transform: translate(-50%, 0);
+    background: #faf5ff;
+    filter: blur(375.033px);
+  }
+
+  .content2 .arrow-up {
+    color: #b6b7b8;
+    flex: 2;
+    position: absolute;
+    right: 50px;
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+  .content2 ul {
+    text-align: center;
+  }
+  .content2 ul li {
+    display: inline-block;
+    z-index: 2;
+  }
+
+  /* .content2 ul li:nth-of-type(4n + 1) {
     text-align: center;
     margin-right: 160px;
   }
@@ -222,7 +293,7 @@ const Container = styled.div<StyledContainerProps>`
   .content2 ul li:nth-of-type(4n + 4) {
     text-align: center;
     margin-right: 150px;
-  }
+  } */
 
   // li {
   //   width: 100wh;
@@ -252,10 +323,6 @@ const Container = styled.div<StyledContainerProps>`
     }
   }
 
-  .header {
-    height: 90px;
-  }
-
   .buttonWrapper {
     background: #8100ff;
     box-shadow: 0px 0px 12.8px rgba(0, 0, 0, 0.08);
@@ -281,25 +348,10 @@ const Container = styled.div<StyledContainerProps>`
     line-height: 1.3;
   }
 
-  .headerBg {
-    background: #000;
-    width: 100%;
-    height: 100px;
-    opacity: ${({ isScrolling }) => (isScrolling ? 0.4 : 0)};
-  }
-
-  .transition {
-    -webkit-transition: all 1s ease-in-out;
-    -moz-transition: all 1s ease-in-out;
-    -o-transition: all 1s ease-in-out;
-    transition: all 1s ease-in-out;
-  }
-
   .content1 {
     position: relative;
     overflow: hidden;
     height: 970px;
-    background-color: ;
   }
 
   .bg1 {
