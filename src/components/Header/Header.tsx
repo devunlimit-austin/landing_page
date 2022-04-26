@@ -7,7 +7,6 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ isScrolling }) => {
-  console.log('isScrolling', isScrolling);
   return (
     <HeaderContainer isScrolling={isScrolling}>
       <div className="headerwrap">
