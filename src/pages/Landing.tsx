@@ -3,6 +3,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useIntl } from 'react-intl';
+import IconLogo from '../assets/sparky-beta-logo.svg';
 
 import { Header, Footer } from '../components';
 
@@ -83,12 +84,12 @@ const SampleData: sample[] = [
 const Landing: React.FC = () => {
   const { formatMessage: f, locale } = useIntl();
   const [isScrolling, setScrolling] = useState<boolean>(false);
+  const [isExpandedDropdown, setExpandedDropdown] = useState<boolean>(false);
 
-  // useEffect(() => {
-  //   const win: Window = window;
-  //   win.addEventListener('scroll', onScrollHandler);
-  //   return () => window.removeEventListener('scroll', onScrollHandler);
-  // }, []);
+  useEffect(() => {}, []);
+  useEffect(() => {
+    console.log('isExpandedDropdown', isExpandedDropdown);
+  }, [isExpandedDropdown]);
 
   const handleUIEvent = (e: UIEvent<HTMLDivElement>) => {
     const scrollTop: number = e.currentTarget.scrollTop;
@@ -98,16 +99,36 @@ const Landing: React.FC = () => {
     } else setScrolling(false);
   };
 
-  // const onScrollHandler = (event: Event) => {
-
-  // };
+  const fnSetExpanded = () => {
+    setExpandedDropdown(!isExpandedDropdown);
+  };
 
   return (
-    <Container onScroll={handleUIEvent}>
+    <Container onScroll={handleUIEvent} isScrolling={isScrolling}>
       <Header isScrolling={isScrolling} />
-      <div className="content1">
-        <div className="text1">
-          <h2 className="heading">하이</h2>
+      <section className="content1">
+        <div className="content1__descriptionWrap">
+          <div className="content1__logo">
+            <img src={IconLogo} alt="smile" />
+          </div>
+          <div>
+            <h1
+              className="content1__descriptionSentence"
+              dangerouslySetInnerHTML={{
+                __html: f(
+                  { id: 'landing.description' },
+                  {
+                    game: `<span class="highlight">${f({
+                      id: 'landing.description.game',
+                    })}</span>`,
+                  },
+                ),
+              }}
+            />
+          </div>
+          <div className="content1__button">
+            <span className="content1__buttontext">스파키 둘러보기</span>
+          </div>
         </div>
         <div className="bg1">
           <video className="video" playsInline muted autoPlay loop>
@@ -116,8 +137,24 @@ const Landing: React.FC = () => {
           </video>
           <div className="gradient"></div>
         </div>
-      </div>
-      <div className="content2">
+      </section>
+
+      <section className="content2">
+        <div>
+          <p
+            className="content2__descriptionSentence"
+            dangerouslySetInnerHTML={{
+              __html: f(
+                { id: 'landing.section2.description' },
+                {
+                  dropdown: `<span class="content2__highlight" >${f({
+                    id: 'landing.section2.description.exercise',
+                  })}</span> `,
+                },
+              ),
+            }}
+          />
+        </div>
         <div className="blur"></div>
         <ul>
           {SampleData.map((_, idx) => (
@@ -149,7 +186,7 @@ const Landing: React.FC = () => {
             <FontAwesomeIcon className="arrow-up" icon={['fas', 'arrow-up']} />
           </div>
         </div>
-      </div>
+      </section>
       <div className="content1"></div>
       <div className="buttonWrapper">
         <div className="button">
@@ -161,11 +198,15 @@ const Landing: React.FC = () => {
   );
 };
 
-const Container = styled.div`
+interface ContainerProps {
+  isScrolling: boolean;
+}
+
+const Container = styled.div<ContainerProps>`
   display: block;
   overflow: auto;
   height: 100vh;
-  background: #f5f6f8;
+  background: #fff;
   font-family: 'Poppins', 'Noto Sans CJK KR', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 
   .fixed {
@@ -185,6 +226,9 @@ const Container = styled.div`
   .section2 {
   }
 
+  .highlight {
+    color: #8100ff;
+  }
   .desc {
     display: inline-block;
     position: relative;
@@ -198,6 +242,8 @@ const Container = styled.div`
     margin-right: 5px;
     margin-right: 25px;
     margin-bottom: 25px;
+    align-items: center;
+    justify-content: center;
   }
   .desc:hover:after {
     background: rgba(129, 0, 255, 0.8);
@@ -208,8 +254,14 @@ const Container = styled.div`
     right: 0;
     bottom: 0;
     color: #fff;
-    padding-top: 30px;
+    padding-top: 15px;
     text-align: center;
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 26.221px;
+    line-height: 130%;
+    letter-spacing: 0.01em;
     content: '공감하기';
   }
 
@@ -249,10 +301,12 @@ const Container = styled.div`
 
   .content2 {
     position: relative;
+    max-width: 1920px;
+    margin: 50px 250px;
   }
 
   .content2 .blur {
-    z-index: 0;
+    z-index: 1;
     position: absolute;
     width: 633px;
     height: 633px;
@@ -278,6 +332,36 @@ const Container = styled.div`
     z-index: 2;
   }
 
+  .content2__angledown {
+    color: #8100ff;
+  }
+
+  .content2__descriptionSentence {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 150%;
+    text-align: center;
+    letter-spacing: 0.01em;
+    color: #000000;
+    white-space: nowrap;
+  }
+
+  .content2__highlight {
+    width: 365px;
+    height: 72px;
+    padding: 12.75px 40px;
+    background: #f9f5ff;
+    border: 0.750066px solid #e4e4e4;
+    box-sizing: border-box;
+    border-radius: 78.7569px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 36.0032px;
+    text-align: center;
+    letter-spacing: 0.01em;
+    color: #8100ff;
+  }
   /* .content2 ul li:nth-of-type(4n + 1) {
     text-align: center;
     margin-right: 160px;
@@ -333,25 +417,54 @@ const Container = styled.div`
     left: 50%;
   }
 
-  .text1 {
-    position: absolute;
-    z-index: 2;
-    top: 25%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  .content__logo {
+    opacity: ${({ isScrolling }) => (isScrolling ? 1 : 0)};
   }
 
-  .heading {
-    color: #fff;
-    font-size: 48px;
+  .content1__descriptionSentence {
+    font-size: 60px;
     font-weight: 700;
-    line-height: 1.3;
+  }
+
+  .content1__descriptionWrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-end;
+    position: absolute;
+    text-align: end;
+    z-index: 2;
+    top: 295px;
+    right: 10%;
+    height: 547px;
+  }
+  .content1__descriptionSentence {
+    font-size: 60px;
+    font-weight: 700;
+  }
+
+  .content1__button {
+    position: relative;
+    width: 348px;
+    height: 82px;
+    background: #8100ff;
+    border-radius: 42.6852px;
+    text-align: center;
+    justify-content: space-around;
+  }
+
+  .content1__buttontext {
+    line-height: 82px;
+    color: #fff;
+    font-family: Roboto;
+    font-size: 28px;
+    font-weight: 700;
   }
 
   .content1 {
     position: relative;
     overflow: hidden;
-    height: 970px;
+    height: 953px;
   }
 
   .bg1 {
@@ -360,15 +473,12 @@ const Container = styled.div`
   }
   .video {
     position: absolute;
-    top: -24%;
-    left: -164%;
-    transform: scale(0.5, 0.5);
+    transform: scale(1.5, 1.5);
   }
   .gradient {
     position: absolute;
     z-index: 5;
-    left: 0%;
-    bottom: 12%;
+    bottom: 0%;
     width: 100%;
     height: 121.51px;
     background: linear-gradient(

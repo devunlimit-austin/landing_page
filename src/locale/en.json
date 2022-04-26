@@ -2,5 +2,10 @@
   "title": "리액트 Intl",
   "info": "현재 언어는 {locale}입니다.",
   "label": "언어",
-  "button": "저장"
+  "button": "저장",
+  "landing.description": "Enjoy dancing<br/>and exercising<br/>as {game}!",
+  "landing.description.game": "game",
+  "landing.section2.description": "Did you experience any difficulties while {dropdown}<br/>Click a concern that applies to you! ",
+  "landing.section2.description.dance": "Dancing",
+  "landing.section2.description.exercise": "Working out"
 }
